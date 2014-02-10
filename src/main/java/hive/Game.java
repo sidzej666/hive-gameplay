@@ -223,7 +223,7 @@ public class Game {
 	
 	private boolean isOkForPiecePut(Coordinates coordinates, Collection<Piece> pieces,
 			Player player) {
-		if (BoardUtils.isOccupied(coordinates, pieces)) {
+		if (BoardUtils.isOccupiedWithoutZ(coordinates, pieces)) {
 			return false;
 		}
 		for (Piece piece: pieces) {

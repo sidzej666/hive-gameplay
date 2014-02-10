@@ -15,25 +15,14 @@ import java.util.Map;
 
 import com.google.common.collect.Lists;
 
-public class GrasshopperMovement implements Movement {
+public class GrasshopperMovement extends MovementImpl {
 
 	private static GrasshopperMovement grasshopperMovement = new GrasshopperMovement();
 	
 	private GrasshopperMovement() {};
 	
 	public List<Move> getAvailableMoves(Piece pieceToMove, Map<Integer, Piece> pieces) {
-		if (pieceToMove == null) {
-			throw new HiveException(NULL_PIECE);
-		}
-		if (pieces == null) {
-			throw new HiveException(NULL_PIECES);
-		}
-		if (!pieces.containsKey(pieceToMove.getId()) || !pieces.values().contains(pieceToMove)) {
-			throw new HiveException(PIECE_NOT_ON_BOARD);
-		}
-		if (pieceToMove.getCoordinates() == null) {
-			throw new HiveException(NULL_COORDINATES);
-		}
+		validateAvailableMoves(pieceToMove, pieces);
 		
 		List<Move> availableMoves = Lists.newArrayList();
 		
@@ -50,7 +39,7 @@ public class GrasshopperMovement implements Movement {
 		Coordinates currentCoordinates = pieceToMove.getCoordinates();
 		while (true) {
 			Coordinates nextCoordinates = moveVector.nextCoordinates(currentCoordinates);
-			if (!BoardUtils.isOccupied(nextCoordinates, pieces.values())) {
+			if (!BoardUtils.isOccupiedWithoutZ(nextCoordinates, pieces.values())) {
 				return new Move(pieceToMove.getId(), nextCoordinates);
 			}
 			currentCoordinates = nextCoordinates;
@@ -62,15 +51,11 @@ public class GrasshopperMovement implements Movement {
 		List<Coordinates> surroundingCoordinates = BoardUtils.getSurroundingCoordinatesWithZZero(pieceToMove.getCoordinates());
 		List<MoveVector> possibleMoveVectors = Lists.newArrayList();
 		for (Coordinates coordinates: surroundingCoordinates) {
-			if (BoardUtils.isOccupied(coordinates, pieces.values())) {
+			if (BoardUtils.isOccupiedWithoutZ(coordinates, pieces.values())) {
 				possibleMoveVectors.add(getMoveVectorForCoordinates(pieceToMove.getCoordinates(), coordinates));
 			}
 		}
 		return possibleMoveVectors;
-	}
-
-	public boolean isMoveOk(Move move, Map<Integer, Piece> pieces) {
-		return getAvailableMoves(pieces.get(move.getPieceId()), pieces).contains(move);
 	}
 
 	public static GrasshopperMovement getInstance() {

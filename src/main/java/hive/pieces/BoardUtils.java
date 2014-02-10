@@ -3,12 +3,15 @@ package hive.pieces;
 import static hive.HiveExceptionCode.*;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import com.google.common.collect.Lists;
 
 import hive.Coordinates;
 import hive.HiveException;
+import hive.Move;
 import hive.Piece;
 import hive.Player;
 
@@ -64,6 +67,14 @@ public class BoardUtils {
 		return surroundingCoordinates;
 	}
 	
+	public static List<Coordinates> getSurroundingCoordinates(Coordinates coordinates) {
+		List<Coordinates> surroundingCoordinates = getSurroundingCoordinatesWithZZero(coordinates);
+		for(Coordinates surroundingCoordinate: surroundingCoordinates) {
+			surroundingCoordinate.setZ(coordinates.getZ());
+		}
+		return surroundingCoordinates;
+	}
+	
 	public static boolean areNeighbours(Coordinates hexOne, Coordinates hexTwo) {
 		int x1 = hexOne.getX();
 		int y1 = hexOne.getY();
@@ -104,7 +115,7 @@ public class BoardUtils {
 		return topPlayer;
 	}
 	
-	public static boolean isOccupied(Coordinates coordinates, Collection<Piece> pieces) {
+	public static boolean isOccupiedWithoutZ(Coordinates coordinates, Collection<Piece> pieces) {
 		for (Piece piece: pieces) {
 			if (coordinates.getX() ==  piece.getCoordinates().getX() &&
 					coordinates.getY() == piece.getCoordinates().getY()) {
@@ -112,6 +123,92 @@ public class BoardUtils {
 			}
 		}
 		return false;
+	}
+	
+	public static boolean isOccupied(Coordinates coordinates, Collection<Piece> pieces) {
+		for (Piece piece: pieces) {
+			if (coordinates.getX() ==  piece.getCoordinates().getX() &&
+					coordinates.getY() == piece.getCoordinates().getY() &&
+					coordinates.getZ() == piece.getCoordinates().getZ()) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public static boolean isOpenPath(Coordinates start, Coordinates end, Collection<Piece> pieces) {
+		if (start == null || end == null) {
+			throw new HiveException(NULL_COORDINATES);
+		}
+		if (pieces == null) {
+			throw new HiveException(NULL_PIECES);
+		}
+		if (!areNeighbours(start, end)) {
+			return false;
+		}
+		if (start.getZ() != end.getZ()) {
+			return false;
+		}
+		
+		if (isOccupied(end, pieces)) {
+			return false;
+		}
+		for (Coordinates coordinate: getSurroundingCoordinates(start)) {
+			if (coordinate.equals(end)) {
+				continue;
+			}
+			if (!isOccupied(coordinate, pieces) && areNeighbours(coordinate, end)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public static boolean isPathNotBlocked(Coordinates startCoordinates, Coordinates endCoordinates, 
+			Collection<Piece> pieces) {
+		List<Coordinates> startCoordinatesSurroundingCoordinates = 
+				BoardUtils.getSurroundingCoordinates(startCoordinates);
+		List<Coordinates> endCoordinatesSurroundingCoordinates =
+				BoardUtils.getSurroundingCoordinates(endCoordinates);
+		int countIntersection = 0;
+		for (Coordinates coordinates: startCoordinatesSurroundingCoordinates) {
+			if (coordinates.equals(endCoordinates)) {
+				continue;
+			}
+			for (Coordinates coordinates2: endCoordinatesSurroundingCoordinates) {
+				if (coordinates.equals(coordinates2)) {
+					if (BoardUtils.isOccupied(coordinates, pieces)) {
+						countIntersection++;
+					}
+				}
+			}
+		}
+		
+		return countIntersection != 2;
+	}
+	
+	public static void removeMovesThatWouldBreakTheHive(Piece pieceToMove, List<Move> availableMoves, Map<Integer, Piece> pieces) {
+		Iterator<Move> iterator = availableMoves.iterator();
+		while(iterator.hasNext()) {
+			Move move = iterator.next();
+			if(isMoveBreakingTheHive(move, pieces, pieceToMove)) {
+				iterator.remove();
+			}
+		}
+	}
+	
+	private static boolean isMoveBreakingTheHive(Move move, Map<Integer, Piece> pieces, Piece pieceToMove) {
+		if (move.getEnd().getZ() > 0) {
+			return false;
+		}
+		List<Coordinates> surroundingCoordinates = BoardUtils.getSurroundingCoordinates(move.getEnd());
+		for(Coordinates coordinates: surroundingCoordinates) {
+			if (!coordinates.equals(pieceToMove.getCoordinates()) && 
+				BoardUtils.isOccupied(coordinates, pieces.values())) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	private static boolean isHiveDestroyed(List<Piece> piecesWithoutThisPiece) {

@@ -7,7 +7,7 @@ import hive.Piece;
 import java.util.List;
 import java.util.Map;
 
-public class SpiderMovement implements Movement {
+public class SpiderMovement extends MovementImpl {
 
 	private static SpiderMovement spiderMovement = new SpiderMovement();
 	
@@ -17,14 +17,9 @@ public class SpiderMovement implements Movement {
 		return spiderMovement;
 	}
 
-	public List<Move> getAvailableMoves(Piece pieceToMove,
-			Map<Integer, Piece> pieces) {
-		// TODO Auto-generated method stub
+	public List<Move> getAvailableMoves(Piece pieceToMove, Map<Integer, Piece> pieces) {
+		validateAvailableMoves(pieceToMove, pieces);
+		
 		return null;
-	}
-
-	public boolean isMoveOk(Move move, Map<Integer, Piece> pieces) {
-		// TODO Auto-generated method stub
-		return false;
 	}
 }

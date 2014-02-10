@@ -8,14 +8,18 @@ import hive.Piece;
 import hive.Player;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BoardUtilsTest {
@@ -288,12 +292,12 @@ public class BoardUtilsTest {
 			);
 		
 		// When
-		boolean result10x0 = BoardUtils.isOccupied(new Coordinates(10, 0, 0), pieces);
-		boolean result12x_1 = BoardUtils.isOccupied(new Coordinates(12, -1, 4), pieces);
-		boolean result_8x4 = BoardUtils.isOccupied(new Coordinates(-8, 4, 1), pieces);
-		boolean result_9x_666 = BoardUtils.isOccupied(new Coordinates(-9, -666, 1), pieces);
-		boolean result66x66 = BoardUtils.isOccupied(new Coordinates(66, 66, 0), pieces);
-		boolean result11x0 = BoardUtils.isOccupied(new Coordinates(11, 0, 0), pieces);
+		boolean result10x0 = BoardUtils.isOccupiedWithoutZ(new Coordinates(10, 0, 0), pieces);
+		boolean result12x_1 = BoardUtils.isOccupiedWithoutZ(new Coordinates(12, -1, 4), pieces);
+		boolean result_8x4 = BoardUtils.isOccupiedWithoutZ(new Coordinates(-8, 4, 1), pieces);
+		boolean result_9x_666 = BoardUtils.isOccupiedWithoutZ(new Coordinates(-9, -666, 1), pieces);
+		boolean result66x66 = BoardUtils.isOccupiedWithoutZ(new Coordinates(66, 66, 0), pieces);
+		boolean result11x0 = BoardUtils.isOccupiedWithoutZ(new Coordinates(11, 0, 0), pieces);
 		
 		// Then
 		assertTrue(result10x0);
@@ -302,6 +306,229 @@ public class BoardUtilsTest {
 		assertTrue(result_9x_666);
 		assertFalse(result66x66);
 		assertFalse(result11x0);
+	}
+	
+	@Test(expected=HiveException.class)
+	public void isOpenPath_shouldThrowWhenNullStartCoordinates() {
+		try {
+			// When
+			BoardUtils.isOpenPath(null, new Coordinates(), prepareGreenSet());
+		} catch (HiveException ex) {
+			// Then
+			assertEquals(NULL_COORDINATES, ex.getHiveExceptionCode());
+			throw ex;
+		}
+		// Shold throw by now
+		assertTrue(false);
+	}
+	
+	@Test(expected=HiveException.class)
+	public void isOpenPath_shouldThrowWhenNullEndCoordinates() {
+		try {
+			// When
+			BoardUtils.isOpenPath(new Coordinates(), null, prepareGreenSet());
+		} catch (HiveException ex) {
+			// Then
+			assertEquals(NULL_COORDINATES, ex.getHiveExceptionCode());
+			throw ex;
+		}
+		// Shold throw by now
+		assertTrue(false);
+	}
+	
+	@Test(expected=HiveException.class)
+	public void isOpenPath_shouldThrowWhenNullPieces() {
+		try {
+			// When
+			BoardUtils.isOpenPath(new Coordinates(), new Coordinates(), null);
+		} catch (HiveException ex) {
+			// Then
+			assertEquals(NULL_PIECES, ex.getHiveExceptionCode());
+			throw ex;
+		}
+		// Shold throw by now
+		assertTrue(false);
+	}
+	
+	@Test
+	public void isOpenPath_shouldReturnFalseWhenNoNeighbours() {
+		// Given
+		Coordinates start = new Coordinates();
+		Coordinates end = new Coordinates(2, 0, 0);
+		List<Piece> pieces = Lists.newArrayList();
+		// When
+		boolean isOpenPath = BoardUtils.isOpenPath(start, end, pieces);
+		
+		//Then
+		assertEquals(false, isOpenPath);
+	}
+	
+	@Test
+	public void isOpenPath_shouldReturnFalseWhenCoordinatesEquals() {
+		// Given
+		Coordinates start = new Coordinates(2, 0, 0);
+		Coordinates end = new Coordinates(2, 0, 0);
+		List<Piece> pieces = Lists.newArrayList();
+
+		// When
+		boolean isOpenPath = BoardUtils.isOpenPath(start, end, pieces);
+		
+		//Then
+		assertEquals(false, isOpenPath);
+	}
+	
+	@Test
+	public void isOpenPath_shouldReturnFalseWhenZCoordinateDifferent() {
+		// Given
+		Coordinates start = new Coordinates(2, 1, 0);
+		Coordinates end = new Coordinates(2, 0, 1);
+		List<Piece> pieces = Lists.newArrayList();
+
+		// When
+		boolean isOpenPath = BoardUtils.isOpenPath(start, end, pieces);
+		
+		//Then
+		assertEquals(false, isOpenPath);
+	}
+	
+	@Test
+	public void isOpenPath_shouldProcessGreenSet() {
+		// Given
+		List<Piece> pieces = prepareGreenSet();
+		// When
+		boolean isOpenPath1 = BoardUtils.isOpenPath(new Coordinates(), new Coordinates(-1, -1, 0), pieces);
+		boolean isOpenPath2 = BoardUtils.isOpenPath(new Coordinates(), new Coordinates(-1, 0, 0), pieces);
+		boolean isOpenPath3 = BoardUtils.isOpenPath(new Coordinates(), new Coordinates(0, 1, 0), pieces);
+		boolean isOpenPath4 = BoardUtils.isOpenPath(new Coordinates(), new Coordinates(1, 0, 0), pieces);
+		boolean isOpenPath5 = BoardUtils.isOpenPath(new Coordinates(), new Coordinates(1, -1, 0), pieces);
+		boolean isOpenPath6 = BoardUtils.isOpenPath(new Coordinates(), new Coordinates(0, -1, 0), pieces);
+		//Then
+		assertEquals(false, isOpenPath1);
+		assertEquals(false, isOpenPath2);
+		assertEquals(false, isOpenPath3);
+		assertEquals(true, isOpenPath4);
+		assertEquals(true, isOpenPath5);
+		assertEquals(false, isOpenPath6);
+	}
+	
+	@Test
+	public void isOpenPath_shouldProcessRedSet() {
+		// Given
+		List<Piece> pieces = prepareRedSet();
+		// When
+		boolean isOpenPath1 = BoardUtils.isOpenPath(new Coordinates(), new Coordinates(-1, -1, 0), pieces);
+		boolean isOpenPath2 = BoardUtils.isOpenPath(new Coordinates(), new Coordinates(-1, 0, 0), pieces);
+		boolean isOpenPath3 = BoardUtils.isOpenPath(new Coordinates(), new Coordinates(0, 1, 0), pieces);
+		boolean isOpenPath4 = BoardUtils.isOpenPath(new Coordinates(), new Coordinates(1, 0, 0), pieces);
+		boolean isOpenPath5 = BoardUtils.isOpenPath(new Coordinates(), new Coordinates(1, -1, 0), pieces);
+		boolean isOpenPath6 = BoardUtils.isOpenPath(new Coordinates(), new Coordinates(0, -1, 0), pieces);
+		//Then
+		assertEquals(true, isOpenPath1);
+		assertEquals(false, isOpenPath2);
+		assertEquals(false, isOpenPath3);
+		assertEquals(false, isOpenPath4);
+		assertEquals(true, isOpenPath5);
+		assertEquals(true, isOpenPath6);
+	}
+	
+	@Test
+	public void isOpenPath_shouldProcessBrownSet() {
+		// Given
+		List<Piece> pieces = prepareBrownSet();
+		// When
+		boolean isOpenPath1 = BoardUtils.isOpenPath(new Coordinates(), new Coordinates(-1, -1, 0), pieces);
+		boolean isOpenPath2 = BoardUtils.isOpenPath(new Coordinates(), new Coordinates(-1, 0, 0), pieces);
+		boolean isOpenPath3 = BoardUtils.isOpenPath(new Coordinates(), new Coordinates(0, 1, 0), pieces);
+		boolean isOpenPath4 = BoardUtils.isOpenPath(new Coordinates(), new Coordinates(1, 0, 0), pieces);
+		boolean isOpenPath5 = BoardUtils.isOpenPath(new Coordinates(), new Coordinates(1, -1, 0), pieces);
+		boolean isOpenPath6 = BoardUtils.isOpenPath(new Coordinates(), new Coordinates(0, -1, 0), pieces);
+		//Then
+		assertEquals(true, isOpenPath1);
+		assertEquals(true, isOpenPath2);
+		assertEquals(false, isOpenPath3);
+		assertEquals(false, isOpenPath4);
+		assertEquals(false, isOpenPath5);
+		assertEquals(true, isOpenPath6);
+	}
+	
+	@Test
+	public void isOpenPath_shouldProcessBlueSet() {
+		// Given
+		List<Piece> pieces = prepareBlueSet();
+		// When
+		boolean isOpenPath1 = BoardUtils.isOpenPath(new Coordinates(), new Coordinates(-1, -1, 0), pieces);
+		boolean isOpenPath2 = BoardUtils.isOpenPath(new Coordinates(), new Coordinates(-1, 0, 0), pieces);
+		boolean isOpenPath3 = BoardUtils.isOpenPath(new Coordinates(), new Coordinates(0, 1, 0), pieces);
+		boolean isOpenPath4 = BoardUtils.isOpenPath(new Coordinates(), new Coordinates(1, 0, 0), pieces);
+		boolean isOpenPath5 = BoardUtils.isOpenPath(new Coordinates(), new Coordinates(1, -1, 0), pieces);
+		boolean isOpenPath6 = BoardUtils.isOpenPath(new Coordinates(), new Coordinates(0, -1, 0), pieces);
+		//Then
+		assertEquals(true, isOpenPath1);
+		assertEquals(true, isOpenPath2);
+		assertEquals(true, isOpenPath3);
+		assertEquals(false, isOpenPath4);
+		assertEquals(false, isOpenPath5);
+		assertEquals(false, isOpenPath6);
+	}
+	
+	@Test
+	public void isOpenPath_shouldProcessBlackSet() {
+		// Given
+		List<Piece> pieces = prepareBlackSet();
+		// When
+		boolean isOpenPath1 = BoardUtils.isOpenPath(new Coordinates(), new Coordinates(-1, -1, 0), pieces);
+		boolean isOpenPath2 = BoardUtils.isOpenPath(new Coordinates(), new Coordinates(-1, 0, 0), pieces);
+		boolean isOpenPath3 = BoardUtils.isOpenPath(new Coordinates(), new Coordinates(0, 1, 0), pieces);
+		boolean isOpenPath4 = BoardUtils.isOpenPath(new Coordinates(), new Coordinates(1, 0, 0), pieces);
+		boolean isOpenPath5 = BoardUtils.isOpenPath(new Coordinates(), new Coordinates(1, -1, 0), pieces);
+		boolean isOpenPath6 = BoardUtils.isOpenPath(new Coordinates(), new Coordinates(0, -1, 0), pieces);
+		//Then
+		assertEquals(false, isOpenPath1);
+		assertEquals(true, isOpenPath2);
+		assertEquals(true, isOpenPath3);
+		assertEquals(true, isOpenPath4);
+		assertEquals(false, isOpenPath5);
+		assertEquals(false, isOpenPath6);
+	}
+	
+	@Test
+	public void isOpenPath_shouldProcessPinkSet() {
+		// Given
+		List<Piece> pieces = preparePinkSet();
+		// When
+		boolean isOpenPath1 = BoardUtils.isOpenPath(new Coordinates(), new Coordinates(-1, -1, 0), pieces);
+		boolean isOpenPath2 = BoardUtils.isOpenPath(new Coordinates(), new Coordinates(-1, 0, 0), pieces);
+		boolean isOpenPath3 = BoardUtils.isOpenPath(new Coordinates(), new Coordinates(0, 1, 0), pieces);
+		boolean isOpenPath4 = BoardUtils.isOpenPath(new Coordinates(), new Coordinates(1, 0, 0), pieces);
+		boolean isOpenPath5 = BoardUtils.isOpenPath(new Coordinates(), new Coordinates(1, -1, 0), pieces);
+		boolean isOpenPath6 = BoardUtils.isOpenPath(new Coordinates(), new Coordinates(0, -1, 0), pieces);
+		//Then
+		assertEquals(false, isOpenPath1);
+		assertEquals(false, isOpenPath2);
+		assertEquals(true, isOpenPath3);
+		assertEquals(true, isOpenPath4);
+		assertEquals(true, isOpenPath5);
+		assertEquals(false, isOpenPath6);
+	}
+	
+	@Test
+	public void isOpenPath_shouldProcessBeetleSet() {
+		// Given
+		List<Piece> pieces = prepareBeetleSet();
+		// When
+		boolean isOpenPath1 = BoardUtils.isOpenPath(new Coordinates(1, 0, 1), new Coordinates(1, 1, 1), pieces);
+		boolean isOpenPath2 = BoardUtils.isOpenPath(new Coordinates(1, 0, 1), new Coordinates(2, 1, 1), pieces);
+		boolean isOpenPath3 = BoardUtils.isOpenPath(new Coordinates(1, 0, 1), new Coordinates(2, 0, 1), pieces);
+		boolean isOpenPath4 = BoardUtils.isOpenPath(new Coordinates(1, 0, 1), new Coordinates(1, -1, 1), pieces);
+		boolean isOpenPath5 = BoardUtils.isOpenPath(new Coordinates(1, 0, 1), new Coordinates(0, 0, 1), pieces);
+		boolean isOpenPath6 = BoardUtils.isOpenPath(new Coordinates(1, 0, 1), new Coordinates(0, 1, 1), pieces);
+		//Then
+		assertEquals(true, isOpenPath1);
+		assertEquals(true, isOpenPath2);
+		assertEquals(true, isOpenPath3);
+		assertEquals(false, isOpenPath4);
+		assertEquals(false, isOpenPath5);
+		assertEquals(false, isOpenPath6);
 	}
 	
 	private void processIsPieceSurroundedTestSet(
@@ -484,5 +711,80 @@ public class BoardUtilsTest {
 	
 	private Piece newPiece(int id) {
 		return new Piece(id, new Coordinates(), null, null, null);
+	}
+	
+	private List<Piece> prepareGreenSet() {
+		List<Piece> pieces = Lists.newArrayList(
+				new Piece(1, new Coordinates(0, -1, 0), null, null, null),
+				new Piece(2, new Coordinates(-1, -1, 0), null, null, null),
+				new Piece(3, new Coordinates(0, 1, 0), null, null, null),
+				new Piece(4, new Coordinates(0, 0, 0), null, null, null)
+		);
+		
+		return pieces;
+	}
+	
+	private List<Piece> prepareRedSet() {
+		List<Piece> pieces = Lists.newArrayList(
+				new Piece(1, new Coordinates(-1, 0, 0), null, null, null),
+				new Piece(2, new Coordinates(1, 0, 0), null, null, null),
+				new Piece(3, new Coordinates(0, 0, 0), null, null, null)
+		);
+		
+		return pieces;
+	}
+	
+	private List<Piece> prepareBrownSet() {
+		List<Piece> pieces = Lists.newArrayList(
+				new Piece(1, new Coordinates(0, 1, 0), null, null, null),
+				new Piece(2, new Coordinates(1, -1, 0), null, null, null),
+				new Piece(3, new Coordinates(0, 0, 0), null, null, null)
+		);
+		
+		return pieces;
+	}
+	
+	private List<Piece> prepareBlueSet() {
+		List<Piece> pieces = Lists.newArrayList(
+				new Piece(1, new Coordinates(1, 0, 0), null, null, null),
+				new Piece(2, new Coordinates(0, -1, 0), null, null, null),
+				new Piece(3, new Coordinates(0, 0, 0), null, null, null)
+		);
+		
+		return pieces;
+	}
+	
+	private List<Piece> prepareBlackSet() {
+		List<Piece> pieces = Lists.newArrayList(
+				new Piece(1, new Coordinates(-1, -1, 0), null, null, null),
+				new Piece(2, new Coordinates(1, -1, 0), null, null, null),
+				new Piece(3, new Coordinates(0, 0, 0), null, null, null));
+		
+		return pieces;
+	}
+	
+	private List<Piece> preparePinkSet() {
+		List<Piece> pieces = Lists.newArrayList(
+				new Piece(1, new Coordinates(-1, 0, 0), null, null, null),
+				new Piece(2, new Coordinates(0, -1, 0), null, null, null),
+				new Piece(3, new Coordinates(0, 0, 0), null, null, null));
+		
+		return pieces;
+	}
+	
+	private List<Piece> prepareBeetleSet() {
+		List<Piece> pieces = Lists.newArrayList(
+				new Piece(1, new Coordinates(0, 1, 0), null, null, null),
+				new Piece(2, new Coordinates(0, 1, 1), null, null, null),
+				new Piece(3, new Coordinates(1, 0, 0), null, null, null),
+				new Piece(4, new Coordinates(1, 0, 1), null, null, null),
+				new Piece(5, new Coordinates(1, -1, 0), null, null, null),
+				new Piece(6, new Coordinates(1, -1, 1), null, null, null),
+				new Piece(7, new Coordinates(1, -1, 2), null, null, null),
+				new Piece(8, new Coordinates(1, 1, 0), null, null, null),
+				new Piece(9, new Coordinates(0, 0, 0), null, null, null)
+		);
+		
+		return pieces;
 	}
 }
