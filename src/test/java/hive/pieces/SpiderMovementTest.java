@@ -77,7 +77,7 @@ public class SpiderMovementTest {
 		// Then
 		assertEquals(2, availableMoves.size());
 		assertTrue(availableMoves.contains(new Move(spider.getId(), new Coordinates(-1, -2, 0))));
-		assertTrue(availableMoves.contains(new Move(spider.getId(), new Coordinates(2, 0, 0))));
+		assertTrue(availableMoves.contains(new Move(spider.getId(), new Coordinates(3, 0, 0))));
 	}
 	
 	@Test
