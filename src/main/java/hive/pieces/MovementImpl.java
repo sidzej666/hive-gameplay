@@ -4,14 +4,12 @@ import static hive.HiveExceptionCode.NULL_COORDINATES;
 import static hive.HiveExceptionCode.NULL_PIECE;
 import static hive.HiveExceptionCode.NULL_PIECES;
 import static hive.HiveExceptionCode.PIECE_NOT_ON_BOARD;
-
-import java.util.List;
-import java.util.Map;
-
 import hive.HiveException;
 import hive.Move;
 import hive.Movement;
 import hive.Piece;
+
+import java.util.Map;
 
 public abstract class MovementImpl implements Movement {
 

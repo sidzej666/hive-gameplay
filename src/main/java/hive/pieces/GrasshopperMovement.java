@@ -1,13 +1,7 @@
 package hive.pieces;
 
-import static hive.HiveExceptionCode.NULL_COORDINATES;
-import static hive.HiveExceptionCode.NULL_PIECE;
-import static hive.HiveExceptionCode.NULL_PIECES;
-import static hive.HiveExceptionCode.PIECE_NOT_ON_BOARD;
 import hive.Coordinates;
-import hive.HiveException;
 import hive.Move;
-import hive.Movement;
 import hive.Piece;
 
 import java.util.List;

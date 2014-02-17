@@ -2,7 +2,6 @@ package hive.pieces;
 
 import hive.Coordinates;
 import hive.Move;
-import hive.Movement;
 import hive.Piece;
 
 import java.util.List;

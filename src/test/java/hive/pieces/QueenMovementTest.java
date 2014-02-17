@@ -1,19 +1,17 @@
 package hive.pieces;
 
 import static hive.HiveExceptionCode.PLAYER_DOESNT_EXIST;
-import static org.junit.Assert.*;
-
-import java.util.List;
-import java.util.Map;
-
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import hive.Coordinates;
 import hive.HiveException;
-import hive.HiveExceptionCode;
 import hive.Move;
 import hive.Piece;
 import hive.Player;
 
-import org.junit.Assert;
+import java.util.List;
+import java.util.Map;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,9 +20,6 @@ import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import base.PieceOnField;
-
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 @RunWith(MockitoJUnitRunner.class)

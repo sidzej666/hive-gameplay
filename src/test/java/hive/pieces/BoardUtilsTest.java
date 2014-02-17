@@ -1,25 +1,26 @@
 package hive.pieces;
 
-import static hive.HiveExceptionCode.*;
-import static org.junit.Assert.*;
+import static hive.HiveExceptionCode.EMPTY_PIECES;
+import static hive.HiveExceptionCode.NULL_COORDINATES;
+import static hive.HiveExceptionCode.NULL_PIECE;
+import static hive.HiveExceptionCode.NULL_PIECES;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import hive.Coordinates;
 import hive.HiveException;
 import hive.Piece;
 import hive.Player;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Logger;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BoardUtilsTest {
