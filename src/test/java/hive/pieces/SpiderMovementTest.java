@@ -7,37 +7,20 @@ import hive.Coordinates;
 import hive.HiveException;
 import hive.Move;
 import hive.Piece;
-import hive.Player;
 
 import java.util.List;
-import java.util.Map;
 
-import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
-import org.mockito.runners.MockitoJUnitRunner;
 
-import com.google.common.collect.Maps;
-
-@RunWith(MockitoJUnitRunner.class)
-public class SpiderMovementTest {
+public class SpiderMovementTest extends PieceTest {
 	@Spy
 	private SpiderMovement spiderMovement = SpiderMovement.getInstance();
 	@Mock
-	private Player player;
-	@Mock
 	private SpiderCharacteristics spiderCharacteristics;
-	private Piece spider = new Piece(0, new Coordinates(), spiderMovement, spiderCharacteristics, player);
-	private Map<Integer, Piece> piecesOnBoard;
-	
-	@Before
-	public void before() {
-		spider.setCoordinates(new Coordinates());
-		piecesOnBoard = Maps.newHashMap();
-	}
+	{piece = new Piece(0, new Coordinates(), spiderMovement, spiderCharacteristics, player);}
 	
 	@Test
 	public void getAvailableMoves_shouldProcessRedSet() {
@@ -45,12 +28,12 @@ public class SpiderMovementTest {
 		prepareRedSet();
 		
 		// When
-		List<Move> availableMoves = spiderMovement.getAvailableMoves(spider, piecesOnBoard);
+		List<Move> availableMoves = spiderMovement.getAvailableMoves(piece, piecesOnBoard);
 		
 		// Then
 		assertEquals(2, availableMoves.size());
-		assertTrue(availableMoves.contains(new Move(spider.getId(), new Coordinates(1, 0, 0))));
-		assertTrue(availableMoves.contains(new Move(spider.getId(), new Coordinates(-1, -2, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(1, 0, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(-1, -2, 0))));
 	}
 	
 	@Test
@@ -59,11 +42,11 @@ public class SpiderMovementTest {
 		prepareGreenSet();
 		
 		// When
-		List<Move> availableMoves = spiderMovement.getAvailableMoves(spider, piecesOnBoard);
+		List<Move> availableMoves = spiderMovement.getAvailableMoves(piece, piecesOnBoard);
 		
 		// Then
 		assertEquals(1, availableMoves.size());
-		assertTrue(availableMoves.contains(new Move(spider.getId(), new Coordinates(0, 2, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(0, 2, 0))));
 	}
 	
 	@Test
@@ -72,12 +55,12 @@ public class SpiderMovementTest {
 		prepareBrownSet();
 		
 		// When
-		List<Move> availableMoves = spiderMovement.getAvailableMoves(spider, piecesOnBoard);
+		List<Move> availableMoves = spiderMovement.getAvailableMoves(piece, piecesOnBoard);
 		
 		// Then
 		assertEquals(2, availableMoves.size());
-		assertTrue(availableMoves.contains(new Move(spider.getId(), new Coordinates(-1, -2, 0))));
-		assertTrue(availableMoves.contains(new Move(spider.getId(), new Coordinates(3, 0, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(-1, -2, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(3, 0, 0))));
 	}
 	
 	@Test
@@ -86,14 +69,14 @@ public class SpiderMovementTest {
 		prepareBlueSet();
 		
 		// When
-		List<Move> availableMoves = spiderMovement.getAvailableMoves(spider, piecesOnBoard);
+		List<Move> availableMoves = spiderMovement.getAvailableMoves(piece, piecesOnBoard);
 		
 		// Then
 		assertEquals(4, availableMoves.size());
-		assertTrue(availableMoves.contains(new Move(spider.getId(), new Coordinates(0, 2, 0))));
-		assertTrue(availableMoves.contains(new Move(spider.getId(), new Coordinates(3, 0, 0))));
-		assertTrue(availableMoves.contains(new Move(spider.getId(), new Coordinates(-2, -1, 0))));
-		assertTrue(availableMoves.contains(new Move(spider.getId(), new Coordinates(0, -1, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(0, 2, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(3, 0, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(-2, -1, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(0, -1, 0))));
 	}
 	
 	@Test
@@ -102,24 +85,24 @@ public class SpiderMovementTest {
 		prepareInstructionSet();
 		
 		// When
-		List<Move> availableMoves = spiderMovement.getAvailableMoves(spider, piecesOnBoard);
+		List<Move> availableMoves = spiderMovement.getAvailableMoves(piece, piecesOnBoard);
 		
 		// Then
 		assertEquals(4, availableMoves.size());
-		assertTrue(availableMoves.contains(new Move(spider.getId(), new Coordinates(-3, 1, 0))));
-		assertTrue(availableMoves.contains(new Move(spider.getId(), new Coordinates(-1, -1, 0))));
-		assertTrue(availableMoves.contains(new Move(spider.getId(), new Coordinates(0, 0, 0))));
-		assertTrue(availableMoves.contains(new Move(spider.getId(), new Coordinates(2, 2, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(-3, 1, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(-1, -1, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(0, 0, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(2, 2, 0))));
 	}
 	
 	@Test(expected=HiveException.class)
 	public void getAvailableMoves_shouldThrowExceptionWhenValidateAvailableMovesThrowsException() {
 		// Given
 		Mockito.doThrow(new HiveException(PLAYER_DOESNT_EXIST))
-			.when(spiderMovement).validateAvailableMoves(spider, piecesOnBoard);
+			.when(spiderMovement).validateAvailableMoves(piece, piecesOnBoard);
 		try {
 			// When
-			spiderMovement.getAvailableMoves(spider, piecesOnBoard);
+			spiderMovement.getAvailableMoves(piece, piecesOnBoard);
 		} catch (HiveException ex) {
 			// Then
 			assertEquals(PLAYER_DOESNT_EXIST, ex.getHiveExceptionCode());
@@ -129,34 +112,34 @@ public class SpiderMovementTest {
 	}
 
 	private void prepareRedSet() {
-		spider.setCoordinates(new Coordinates(-1, 1, 0));
+		piece.setCoordinates(new Coordinates(-1, 1, 0));
 		
-		piecesOnBoard.put(0, spider);
+		piecesOnBoard.put(0, piece);
 		piecesOnBoard.put(1, new Piece(1, new Coordinates(0, 1, 0), spiderMovement, spiderCharacteristics, player));
 		piecesOnBoard.put(2, new Piece(2, new Coordinates(0, 0, 0), spiderMovement, spiderCharacteristics, player));
 		piecesOnBoard.put(3, new Piece(3, new Coordinates(0, -1, 0), spiderMovement, spiderCharacteristics, player));
 	}
 	
 	private void prepareGreenSet() {
-		spider.setCoordinates(new Coordinates(-2, 3, 0));
+		piece.setCoordinates(new Coordinates(-2, 3, 0));
 		
-		piecesOnBoard.put(0, spider);
+		piecesOnBoard.put(0, piece);
 		piecesOnBoard.put(1, new Piece(1, new Coordinates(-1, 2, 0), spiderMovement, spiderCharacteristics, player));
 	}
 	
 	private void prepareBrownSet() {
-		spider.setCoordinates(new Coordinates(0, 1, 0));
+		piece.setCoordinates(new Coordinates(0, 1, 0));
 		
-		piecesOnBoard.put(0, spider);
+		piecesOnBoard.put(0, piece);
 		piecesOnBoard.put(1, new Piece(1, new Coordinates(0, 0, 0), spiderMovement, spiderCharacteristics, player));
 		piecesOnBoard.put(2, new Piece(2, new Coordinates(0, -1, 0), spiderMovement, spiderCharacteristics, player));
 		piecesOnBoard.put(3, new Piece(3, new Coordinates(2, 0, 0), spiderMovement, spiderCharacteristics, player));
 	}
 	
 	private void prepareBlueSet() {
-		spider.setCoordinates(new Coordinates(0, 1, 0));
+		piece.setCoordinates(new Coordinates(0, 1, 0));
 		
-		piecesOnBoard.put(0, spider);
+		piecesOnBoard.put(0, piece);
 		piecesOnBoard.put(1, new Piece(1, new Coordinates(0, 0, 0), spiderMovement, spiderCharacteristics, player));
 		piecesOnBoard.put(2, new Piece(2, new Coordinates(-1, -1, 0), spiderMovement, spiderCharacteristics, player));
 		piecesOnBoard.put(3, new Piece(3, new Coordinates(2, 1, 0), spiderMovement, spiderCharacteristics, player));
@@ -165,9 +148,9 @@ public class SpiderMovementTest {
 	}
 	
 	private void prepareInstructionSet() {
-		spider.setCoordinates(new Coordinates(-1, 2, 0));
+		piece.setCoordinates(new Coordinates(-1, 2, 0));
 		
-		piecesOnBoard.put(0, spider);
+		piecesOnBoard.put(0, piece);
 		piecesOnBoard.put(1, new Piece(1, new Coordinates(-2, 1, 0), spiderMovement, spiderCharacteristics, player));
 		piecesOnBoard.put(2, new Piece(2, new Coordinates(-2, 0, 0), spiderMovement, spiderCharacteristics, player));
 		piecesOnBoard.put(3, new Piece(3, new Coordinates(-2, -1, 0), spiderMovement, spiderCharacteristics, player));

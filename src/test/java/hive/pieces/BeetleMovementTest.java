@@ -7,37 +7,20 @@ import hive.Coordinates;
 import hive.HiveException;
 import hive.Move;
 import hive.Piece;
-import hive.Player;
 
 import java.util.List;
-import java.util.Map;
 
-import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
-import org.mockito.runners.MockitoJUnitRunner;
 
-import com.google.common.collect.Maps;
-
-@RunWith(MockitoJUnitRunner.class)
-public class BeetleMovementTest {
+public class BeetleMovementTest extends PieceTest {
 	@Spy
 	private BeetleMovement beetleMovement = BeetleMovement.getInstance();
 	@Mock
-	private Player player;
-	@Mock
 	private BeetleCharacteristics beetleCharacteristics;
-	private Piece beetle = new Piece(0, new Coordinates(), beetleMovement, beetleCharacteristics, player);
-	private Map<Integer, Piece> piecesOnBoard;
-	
-	@Before
-	public void before() {
-		beetle.setCoordinates(new Coordinates());
-		piecesOnBoard = Maps.newHashMap();
-	}
+	{piece = new Piece(0, new Coordinates(), beetleMovement, beetleCharacteristics, player);}
 	
 	@Test
 	public void getAvailableMoves_shouldProcessGreenSet() {
@@ -45,16 +28,16 @@ public class BeetleMovementTest {
 		prepareGreenSet();
 		
 		// When
-		List<Move> availableMoves = beetleMovement.getAvailableMoves(beetle, piecesOnBoard);
+		List<Move> availableMoves = beetleMovement.getAvailableMoves(piece, piecesOnBoard);
 		
 		// Then
 		assertEquals(6, availableMoves.size());
-		assertTrue(availableMoves.contains(new Move(beetle.getId(), new Coordinates(-1, 0, 1))));
-		assertTrue(availableMoves.contains(new Move(beetle.getId(), new Coordinates(0, 1, 0))));
-		assertTrue(availableMoves.contains(new Move(beetle.getId(), new Coordinates(1, 0, 1))));
-		assertTrue(availableMoves.contains(new Move(beetle.getId(), new Coordinates(1, -1, 0))));
-		assertTrue(availableMoves.contains(new Move(beetle.getId(), new Coordinates(0, -1, 0))));
-		assertTrue(availableMoves.contains(new Move(beetle.getId(), new Coordinates(-1, -1, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(-1, 0, 1))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(0, 1, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(1, 0, 1))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(1, -1, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(0, -1, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(-1, -1, 0))));
 	}
 	
 	@Test
@@ -63,14 +46,14 @@ public class BeetleMovementTest {
 		prepareRedSet();
 		
 		// When
-		List<Move> availableMoves = beetleMovement.getAvailableMoves(beetle, piecesOnBoard);
+		List<Move> availableMoves = beetleMovement.getAvailableMoves(piece, piecesOnBoard);
 		
 		// Then
 		assertEquals(4, availableMoves.size());
-		assertTrue(availableMoves.contains(new Move(beetle.getId(), new Coordinates(-1, 0, 1))));
-		assertTrue(availableMoves.contains(new Move(beetle.getId(), new Coordinates(1, 0, 1))));
-		assertTrue(availableMoves.contains(new Move(beetle.getId(), new Coordinates(1, -1, 1))));
-		assertTrue(availableMoves.contains(new Move(beetle.getId(), new Coordinates(-1, -1, 1))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(-1, 0, 1))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(1, 0, 1))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(1, -1, 1))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(-1, -1, 1))));
 	}
 	
 	@Test
@@ -79,15 +62,15 @@ public class BeetleMovementTest {
 		prepareBrownSet();
 		
 		// When
-		List<Move> availableMoves = beetleMovement.getAvailableMoves(beetle, piecesOnBoard);
+		List<Move> availableMoves = beetleMovement.getAvailableMoves(piece, piecesOnBoard);
 		
 		// Then
 		assertEquals(5, availableMoves.size());
-		assertTrue(availableMoves.contains(new Move(beetle.getId(), new Coordinates(0, 1, 2))));
-		assertTrue(availableMoves.contains(new Move(beetle.getId(), new Coordinates(1, 1, 1))));
-		assertTrue(availableMoves.contains(new Move(beetle.getId(), new Coordinates(2, 1, 0))));
-		assertTrue(availableMoves.contains(new Move(beetle.getId(), new Coordinates(2, 0, 0))));
-		assertTrue(availableMoves.contains(new Move(beetle.getId(), new Coordinates(1, -1, 2))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(0, 1, 2))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(1, 1, 1))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(2, 1, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(2, 0, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(1, -1, 2))));
 	}
 	
 	@Test
@@ -96,16 +79,16 @@ public class BeetleMovementTest {
 		prepareMultiBeetleSet();
 		
 		// When
-		List<Move> availableMoves = beetleMovement.getAvailableMoves(beetle, piecesOnBoard);
+		List<Move> availableMoves = beetleMovement.getAvailableMoves(piece, piecesOnBoard);
 		
 		// Then
 		assertEquals(6, availableMoves.size());
-		assertTrue(availableMoves.contains(new Move(beetle.getId(), new Coordinates(0, 1, 0))));
-		assertTrue(availableMoves.contains(new Move(beetle.getId(), new Coordinates(1, 0, 2))));
-		assertTrue(availableMoves.contains(new Move(beetle.getId(), new Coordinates(1, -1, 1))));
-		assertTrue(availableMoves.contains(new Move(beetle.getId(), new Coordinates(0, -1, 2))));
-		assertTrue(availableMoves.contains(new Move(beetle.getId(), new Coordinates(-1, -1, 1))));
-		assertTrue(availableMoves.contains(new Move(beetle.getId(), new Coordinates(-1, 0, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(0, 1, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(1, 0, 2))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(1, -1, 1))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(0, -1, 2))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(-1, -1, 1))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(-1, 0, 0))));
 	}
 	
 	@Test
@@ -114,24 +97,24 @@ public class BeetleMovementTest {
 		prepareInstructionSet();
 		
 		// When
-		List<Move> availableMoves = beetleMovement.getAvailableMoves(beetle, piecesOnBoard);
+		List<Move> availableMoves = beetleMovement.getAvailableMoves(piece, piecesOnBoard);
 		
 		// Then
 		assertEquals(4, availableMoves.size());
-		assertTrue(availableMoves.contains(new Move(beetle.getId(), new Coordinates(1, 1, 1))));
-		assertTrue(availableMoves.contains(new Move(beetle.getId(), new Coordinates(2, 1, 0))));
-		assertTrue(availableMoves.contains(new Move(beetle.getId(), new Coordinates(0, 1, 1))));
-		assertTrue(availableMoves.contains(new Move(beetle.getId(), new Coordinates(0, 0, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(1, 1, 1))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(2, 1, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(0, 1, 1))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(0, 0, 0))));
 	}
 	
 	@Test(expected=HiveException.class)
 	public void getAvailableMoves_shouldThrowExceptionWhenValidateAvailableMovesThrowsException() {
 		// Given
 		Mockito.doThrow(new HiveException(PLAYER_DOESNT_EXIST))
-			.when(beetleMovement).validateAvailableMoves(beetle, piecesOnBoard);
+			.when(beetleMovement).validateAvailableMoves(piece, piecesOnBoard);
 		try {
 			// When
-			beetleMovement.getAvailableMoves(beetle, piecesOnBoard);
+			beetleMovement.getAvailableMoves(piece, piecesOnBoard);
 		} catch (HiveException ex) {
 			// Then
 			assertEquals(PLAYER_DOESNT_EXIST, ex.getHiveExceptionCode());
@@ -141,18 +124,18 @@ public class BeetleMovementTest {
 	}
 	
 	private void prepareGreenSet() {
-		beetle.setCoordinates(new Coordinates(0, 0, 1));
+		piece.setCoordinates(new Coordinates(0, 0, 1));
 		
-		piecesOnBoard.put(0, beetle);
+		piecesOnBoard.put(0, piece);
 		piecesOnBoard.put(1, new Piece(1, new Coordinates(0, 0, 0), beetleMovement, beetleCharacteristics, player));
 		piecesOnBoard.put(2, new Piece(2, new Coordinates(-1, 0, 0), beetleMovement, beetleCharacteristics, player));
 		piecesOnBoard.put(3, new Piece(3, new Coordinates(1, 0, 0), beetleMovement, beetleCharacteristics, player));
 	}
 	
 	private void prepareRedSet() {
-		beetle.setCoordinates(new Coordinates(0, 0, 0));
+		piece.setCoordinates(new Coordinates(0, 0, 0));
 		
-		piecesOnBoard.put(0, beetle);
+		piecesOnBoard.put(0, piece);
 		piecesOnBoard.put(1, new Piece(1, new Coordinates(-1, 0, 0), beetleMovement, beetleCharacteristics, player));
 		piecesOnBoard.put(2, new Piece(2, new Coordinates(-1, -1, 0), beetleMovement, beetleCharacteristics, player));
 		piecesOnBoard.put(3, new Piece(3, new Coordinates(1, 0, 0), beetleMovement, beetleCharacteristics, player));
@@ -160,9 +143,9 @@ public class BeetleMovementTest {
 	}
 	
 	private void prepareBrownSet() {
-		beetle.setCoordinates(new Coordinates(1, 0, 1));
+		piece.setCoordinates(new Coordinates(1, 0, 1));
 		
-		piecesOnBoard.put(0, beetle);
+		piecesOnBoard.put(0, piece);
 		piecesOnBoard.put(1, new Piece(1, new Coordinates(0, 0, 0), beetleMovement, beetleCharacteristics, player));
 		piecesOnBoard.put(2, new Piece(2, new Coordinates(0, 1, 0), beetleMovement, beetleCharacteristics, player));
 		piecesOnBoard.put(3, new Piece(3, new Coordinates(0, -1, 0), beetleMovement, beetleCharacteristics, player));
@@ -174,9 +157,9 @@ public class BeetleMovementTest {
 	}
 	
 	private void prepareMultiBeetleSet() {
-		beetle.setCoordinates(new Coordinates(0, 0, 2));
+		piece.setCoordinates(new Coordinates(0, 0, 2));
 		
-		piecesOnBoard.put(0, beetle);
+		piecesOnBoard.put(0, piece);
 		piecesOnBoard.put(1, new Piece(1, new Coordinates(0, 0, 0), beetleMovement, beetleCharacteristics, player));
 		piecesOnBoard.put(2, new Piece(2, new Coordinates(0, -1, 0), beetleMovement, beetleCharacteristics, player));
 		piecesOnBoard.put(3, new Piece(3, new Coordinates(-1, -1, 0), beetleMovement, beetleCharacteristics, player));
@@ -188,9 +171,9 @@ public class BeetleMovementTest {
 	}
 	
 	private void prepareInstructionSet() {
-		beetle.setCoordinates(new Coordinates(1, 0, 0));
+		piece.setCoordinates(new Coordinates(1, 0, 0));
 		
-		piecesOnBoard.put(0, beetle);
+		piecesOnBoard.put(0, piece);
 		piecesOnBoard.put(1, new Piece(1, new Coordinates(1, 1, 0), beetleMovement, beetleCharacteristics, player));
 		piecesOnBoard.put(2, new Piece(2, new Coordinates(0, 1, 0), beetleMovement, beetleCharacteristics, player));
 		piecesOnBoard.put(3, new Piece(3, new Coordinates(-1, 0, 0), beetleMovement, beetleCharacteristics, player));

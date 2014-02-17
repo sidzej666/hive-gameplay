@@ -1,42 +1,26 @@
 package hive.pieces;
 
 import static hive.HiveExceptionCode.PLAYER_DOESNT_EXIST;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import hive.Coordinates;
 import hive.HiveException;
 import hive.Move;
 import hive.Piece;
-import hive.Player;
 
 import java.util.List;
-import java.util.Map;
 
-import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
-import org.mockito.runners.MockitoJUnitRunner;
 
-import com.google.common.collect.Maps;
-
-@RunWith(MockitoJUnitRunner.class)
-public class AntMovementTest {
+public class AntMovementTest extends PieceTest {
 	@Spy
 	private AntMovement antMovement = AntMovement.getInstance();
 	@Mock
-	private Player player;
-	@Mock
 	private AntCharacteristics antCharacteristics;
-	private Piece ant = new Piece(0, new Coordinates(), antMovement, antCharacteristics, player);
-	private Map<Integer, Piece> piecesOnBoard;
-	
-	@Before
-	public void before() {
-		ant.setCoordinates(new Coordinates());
-		piecesOnBoard = Maps.newHashMap();
-	}
+	{piece = new Piece(0, new Coordinates(), antMovement, antCharacteristics, player);}
 	
 	@Test
 	public void getAvailableMoves_shouldProcessGreenSet() {
@@ -44,17 +28,17 @@ public class AntMovementTest {
 		prepareGreenSet();
 		
 		// When
-		List<Move> availableMoves = antMovement.getAvailableMoves(ant, piecesOnBoard);
+		List<Move> availableMoves = antMovement.getAvailableMoves(piece, piecesOnBoard);
 		
 		// Then
 		assertEquals(7, availableMoves.size());
-		assertTrue(availableMoves.contains(new Move(ant.getId(), new Coordinates(-1, -1, 0))));
-		assertTrue(availableMoves.contains(new Move(ant.getId(), new Coordinates(-2, 0, 0))));
-		assertTrue(availableMoves.contains(new Move(ant.getId(), new Coordinates(-2, 1, 0))));
-		assertTrue(availableMoves.contains(new Move(ant.getId(), new Coordinates(-1, 1, 0))));
-		assertTrue(availableMoves.contains(new Move(ant.getId(), new Coordinates(0, 1, 0))));
-		assertTrue(availableMoves.contains(new Move(ant.getId(), new Coordinates(1, 0, 0))));
-		assertTrue(availableMoves.contains(new Move(ant.getId(), new Coordinates(1, -1, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(-1, -1, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(-2, 0, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(-2, 1, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(-1, 1, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(0, 1, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(1, 0, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(1, -1, 0))));
 	}
 	
 	@Test
@@ -63,26 +47,26 @@ public class AntMovementTest {
 		prepareRedSet();
 		
 		// When
-		List<Move> availableMoves = antMovement.getAvailableMoves(ant, piecesOnBoard);
+		List<Move> availableMoves = antMovement.getAvailableMoves(piece, piecesOnBoard);
 		
 		// Then
 		assertEquals(16, availableMoves.size());
-		assertTrue(availableMoves.contains(new Move(ant.getId(), new Coordinates(-1, -1, 0))));
-		assertTrue(availableMoves.contains(new Move(ant.getId(), new Coordinates(-1, 0, 0))));
-		assertTrue(availableMoves.contains(new Move(ant.getId(), new Coordinates(-1, 1, 0))));
-		assertTrue(availableMoves.contains(new Move(ant.getId(), new Coordinates(-1, 2, 0))));
-		assertTrue(availableMoves.contains(new Move(ant.getId(), new Coordinates(-1, 3, 0))));
-		assertTrue(availableMoves.contains(new Move(ant.getId(), new Coordinates(0, 4, 0))));
-		assertTrue(availableMoves.contains(new Move(ant.getId(), new Coordinates(1, 4, 0))));
-		assertTrue(availableMoves.contains(new Move(ant.getId(), new Coordinates(1, -1, 0))));
-		assertTrue(availableMoves.contains(new Move(ant.getId(), new Coordinates(2, 5, 0))));
-		assertTrue(availableMoves.contains(new Move(ant.getId(), new Coordinates(2, 3, 0))));
-		assertTrue(availableMoves.contains(new Move(ant.getId(), new Coordinates(2, 0, 0))));
-		assertTrue(availableMoves.contains(new Move(ant.getId(), new Coordinates(3, 4, 0))));
-		assertTrue(availableMoves.contains(new Move(ant.getId(), new Coordinates(3, 3, 0))));
-		assertTrue(availableMoves.contains(new Move(ant.getId(), new Coordinates(3, 2, 0))));
-		assertTrue(availableMoves.contains(new Move(ant.getId(), new Coordinates(3, 1, 0))));
-		assertTrue(availableMoves.contains(new Move(ant.getId(), new Coordinates(3, 0, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(-1, -1, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(-1, 0, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(-1, 1, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(-1, 2, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(-1, 3, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(0, 4, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(1, 4, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(1, -1, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(2, 5, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(2, 3, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(2, 0, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(3, 4, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(3, 3, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(3, 2, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(3, 1, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(3, 0, 0))));
 	}
 	
 	@Test
@@ -91,16 +75,16 @@ public class AntMovementTest {
 		prepareBrownSet();
 		
 		// When
-		List<Move> availableMoves = antMovement.getAvailableMoves(ant, piecesOnBoard);
+		List<Move> availableMoves = antMovement.getAvailableMoves(piece, piecesOnBoard);
 		
 		// Then
 		assertEquals(6, availableMoves.size());
-		assertTrue(availableMoves.contains(new Move(ant.getId(), new Coordinates(1, 1, 0))));
-		assertTrue(availableMoves.contains(new Move(ant.getId(), new Coordinates(1, 3, 0))));
-		assertTrue(availableMoves.contains(new Move(ant.getId(), new Coordinates(2, 3, 0))));
-		assertTrue(availableMoves.contains(new Move(ant.getId(), new Coordinates(2, 1, 0))));
-		assertTrue(availableMoves.contains(new Move(ant.getId(), new Coordinates(3, 2, 0))));
-		assertTrue(availableMoves.contains(new Move(ant.getId(), new Coordinates(3, 1, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(1, 1, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(1, 3, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(2, 3, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(2, 1, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(3, 2, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(3, 1, 0))));
 	}
 	
 	@Test
@@ -109,31 +93,31 @@ public class AntMovementTest {
 		prepareInstructionSet();
 		
 		// When
-		List<Move> availableMoves = antMovement.getAvailableMoves(ant, piecesOnBoard);
+		List<Move> availableMoves = antMovement.getAvailableMoves(piece, piecesOnBoard);
 		
 		// Then
 		assertEquals(11, availableMoves.size());
-		assertTrue(availableMoves.contains(new Move(ant.getId(), new Coordinates(-2, 0, 0))));
-		assertTrue(availableMoves.contains(new Move(ant.getId(), new Coordinates(-2, 1, 0))));
-		assertTrue(availableMoves.contains(new Move(ant.getId(), new Coordinates(-2, 2, 0))));
-		assertTrue(availableMoves.contains(new Move(ant.getId(), new Coordinates(-1, 2, 0))));
-		assertTrue(availableMoves.contains(new Move(ant.getId(), new Coordinates(-1, -1, 0))));
-		assertTrue(availableMoves.contains(new Move(ant.getId(), new Coordinates(0, -1, 0))));
-		assertTrue(availableMoves.contains(new Move(ant.getId(), new Coordinates(0, 2, 0))));
-		assertTrue(availableMoves.contains(new Move(ant.getId(), new Coordinates(1, 2, 0))));
-		assertTrue(availableMoves.contains(new Move(ant.getId(), new Coordinates(2, 2, 0))));
-		assertTrue(availableMoves.contains(new Move(ant.getId(), new Coordinates(2, 1, 0))));
-		assertTrue(availableMoves.contains(new Move(ant.getId(), new Coordinates(2, 0, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(-2, 0, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(-2, 1, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(-2, 2, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(-1, 2, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(-1, -1, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(0, -1, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(0, 2, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(1, 2, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(2, 2, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(2, 1, 0))));
+		assertTrue(availableMoves.contains(new Move(piece.getId(), new Coordinates(2, 0, 0))));
 	}
 	
 	@Test(expected=HiveException.class)
 	public void getAvailableMoves_shouldThrowExceptionWhenValidateAvailableMovesThrowsException() {
 		// Given
 		Mockito.doThrow(new HiveException(PLAYER_DOESNT_EXIST))
-			.when(antMovement).validateAvailableMoves(ant, piecesOnBoard);
+			.when(antMovement).validateAvailableMoves(piece, piecesOnBoard);
 		try {
 			// When
-			antMovement.getAvailableMoves(ant, piecesOnBoard);
+			antMovement.getAvailableMoves(piece, piecesOnBoard);
 		} catch (HiveException ex) {
 			// Then
 			assertEquals(PLAYER_DOESNT_EXIST, ex.getHiveExceptionCode());
@@ -143,17 +127,17 @@ public class AntMovementTest {
 	}
 	
 	private void prepareGreenSet() {
-		ant.setCoordinates(new Coordinates(0, -1, 0));
+		piece.setCoordinates(new Coordinates(0, -1, 0));
 		
-		piecesOnBoard.put(0, ant);
+		piecesOnBoard.put(0, piece);
 		piecesOnBoard.put(1, new Piece(1, new Coordinates(0, 0, 0), antMovement, antCharacteristics, player));
 		piecesOnBoard.put(2, new Piece(2, new Coordinates(-1, 0, 0), antMovement, antCharacteristics, player));
 	}
 	
 	private void prepareRedSet() {
-		ant.setCoordinates(new Coordinates(0, -1, 0));
+		piece.setCoordinates(new Coordinates(0, -1, 0));
 		
-		piecesOnBoard.put(0, ant);
+		piecesOnBoard.put(0, piece);
 		piecesOnBoard.put(1, new Piece(1, new Coordinates(0, 0, 0), antMovement, antCharacteristics, player));
 		piecesOnBoard.put(2, new Piece(2, new Coordinates(0, 1, 0), antMovement, antCharacteristics, player));
 		piecesOnBoard.put(3, new Piece(3, new Coordinates(0, 2, 0), antMovement, antCharacteristics, player));
@@ -166,9 +150,9 @@ public class AntMovementTest {
 	}
 	
 	private void prepareBrownSet() {
-		ant.setCoordinates(new Coordinates(1, 2, 0));
+		piece.setCoordinates(new Coordinates(1, 2, 0));
 		
-		piecesOnBoard.put(0, ant);
+		piecesOnBoard.put(0, piece);
 		piecesOnBoard.put(1, new Piece(1, new Coordinates(0, 1, 0), antMovement, antCharacteristics, player));
 		piecesOnBoard.put(2, new Piece(2, new Coordinates(0, 2, 0), antMovement, antCharacteristics, player));
 		piecesOnBoard.put(3, new Piece(3, new Coordinates(0, 3, 0), antMovement, antCharacteristics, player));
@@ -184,9 +168,9 @@ public class AntMovementTest {
 	}
 	
 	private void prepareInstructionSet() {
-		ant.setCoordinates(new Coordinates(1, -1, 0));
+		piece.setCoordinates(new Coordinates(1, -1, 0));
 		
-		piecesOnBoard.put(0, ant);
+		piecesOnBoard.put(0, piece);
 		piecesOnBoard.put(1, new Piece(1, new Coordinates(1, 0, 0), antMovement, antCharacteristics, player));
 		piecesOnBoard.put(2, new Piece(2, new Coordinates(1, 1, 0), antMovement, antCharacteristics, player));
 		piecesOnBoard.put(3, new Piece(3, new Coordinates(0, 0, 0), antMovement, antCharacteristics, player));
